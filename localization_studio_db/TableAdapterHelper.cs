@@ -7,48 +7,18 @@ namespace localization_studio_db
 {
     public static class TableAdapterHelper
     {
-        public static void FillAllTables(LocalizationDataSet dataSet)
+        public static void FillAllTables(LocalizationDataSet dataSet, bool isAdmin)
         {
             if (dataSet == null) throw new ArgumentNullException(nameof(dataSet));
 
             try { new LocalizationDataSetTableAdapters.Вид_медиаTableAdapter().Fill(dataSet.Вид_медиа); }
             catch (Exception ex) { Debug.WriteLine($"[Fill] Вид_медиа failed: {ex.Message}"); }
 
-            try { new LocalizationDataSetTableAdapters.Владение_языкамиTableAdapter().Fill(dataSet.Владение_языками); }
-            catch (Exception ex) { Debug.WriteLine($"[Fill] Владение_языками failed: {ex.Message}"); }
-
             try { new LocalizationDataSetTableAdapters.ДолжностьTableAdapter().Fill(dataSet.Должность); }
             catch (Exception ex) { Debug.WriteLine($"[Fill] Должность failed: {ex.Message}"); }
 
-            try { new LocalizationDataSetTableAdapters.ЗадачиTableAdapter().Fill(dataSet.Задачи); }
-            catch (Exception ex) { Debug.WriteLine($"[Fill] Задачи failed: {ex.Message}"); }
-
-            try { new LocalizationDataSetTableAdapters.КлиентыTableAdapter().Fill(dataSet.Клиенты); }
-            catch (Exception ex) { Debug.WriteLine($"[Fill] Клиенты failed: {ex.Message}"); }
-
-            try { new LocalizationDataSetTableAdapters.КонтрактыTableAdapter().Fill(dataSet.Контракты); }
-            catch (Exception ex) { Debug.WriteLine($"[Fill] Контракты failed: {ex.Message}"); }
-
-            try { new LocalizationDataSetTableAdapters.МедиаTableAdapter().Fill(dataSet.Медиа); }
-            catch (Exception ex) { Debug.WriteLine($"[Fill] Медиа failed: {ex.Message}"); }
-
             try { new LocalizationDataSetTableAdapters.ПриоритетTableAdapter().Fill(dataSet.Приоритет); }
             catch (Exception ex) { Debug.WriteLine($"[Fill] Приоритет failed: {ex.Message}"); }
-
-            try { new LocalizationDataSetTableAdapters.Проектные_командыTableAdapter().Fill(dataSet.Проектные_команды); }
-            catch (Exception ex) { Debug.WriteLine($"[Fill] Проектные_команды failed: {ex.Message}"); }
-
-            try { new LocalizationDataSetTableAdapters.Проектные_ролиTableAdapter().Fill(dataSet.Проектные_роли); }
-            catch (Exception ex) { Debug.WriteLine($"[Fill] Проектные_роли failed: {ex.Message}"); }
-
-            try { new LocalizationDataSetTableAdapters.ПроектыTableAdapter().Fill(dataSet.Проекты); }
-            catch (Exception ex) { Debug.WriteLine($"[Fill] Проекты failed: {ex.Message}"); }
-
-            try { new LocalizationDataSetTableAdapters.СловариTableAdapter().Fill(dataSet.Словари); }
-            catch (Exception ex) { Debug.WriteLine($"[Fill] Словари failed: {ex.Message}"); }
-
-            try { new LocalizationDataSetTableAdapters.СотрудникиTableAdapter().Fill(dataSet.Сотрудники); }
-            catch (Exception ex) { Debug.WriteLine($"[Fill] Сотрудники failed: {ex.Message}"); }
 
             try { new LocalizationDataSetTableAdapters.Статус_выполненияTableAdapter().Fill(dataSet.Статус_выполнения); }
             catch (Exception ex) { Debug.WriteLine($"[Fill] Статус_выполнения failed: {ex.Message}"); }
@@ -64,6 +34,37 @@ namespace localization_studio_db
 
             try { new LocalizationDataSetTableAdapters.ЯзыкиTableAdapter().Fill(dataSet.Языки); }
             catch (Exception ex) { Debug.WriteLine($"[Fill] Языки failed: {ex.Message}"); }
+
+
+            try { new LocalizationDataSetTableAdapters.Владение_языкамиTableAdapter().Fill(dataSet.Владение_языками); }
+            catch (Exception ex) { Debug.WriteLine($"[Fill] Владение_языками failed: {ex.Message}"); }
+
+            try { new LocalizationDataSetTableAdapters.ЗадачиTableAdapter().Fill(dataSet.Задачи); }
+            catch (Exception ex) { Debug.WriteLine($"[Fill] Задачи failed: {ex.Message}"); }
+
+            try { new LocalizationDataSetTableAdapters.КлиентыTableAdapter().Fill(dataSet.Клиенты); }
+            catch (Exception ex) { Debug.WriteLine($"[Fill] Клиенты failed: {ex.Message}"); }
+
+            try { new LocalizationDataSetTableAdapters.КонтрактыTableAdapter().Fill(dataSet.Контракты); }
+            catch (Exception ex) { Debug.WriteLine($"[Fill] Контракты failed: {ex.Message}"); }
+
+            try { new LocalizationDataSetTableAdapters.МедиаTableAdapter().Fill(dataSet.Медиа); }
+            catch (Exception ex) { Debug.WriteLine($"[Fill] Медиа failed: {ex.Message}"); }
+
+            try { new LocalizationDataSetTableAdapters.Проектные_командыTableAdapter().Fill(dataSet.Проектные_команды); }
+            catch (Exception ex) { Debug.WriteLine($"[Fill] Проектные_команды failed: {ex.Message}"); }
+
+            try { new LocalizationDataSetTableAdapters.Проектные_ролиTableAdapter().Fill(dataSet.Проектные_роли); }
+            catch (Exception ex) { Debug.WriteLine($"[Fill] Проектные_роли failed: {ex.Message}"); }
+
+            try { new LocalizationDataSetTableAdapters.ПроектыTableAdapter().Fill(dataSet.Проекты); }
+            catch (Exception ex) { Debug.WriteLine($"[Fill] Проекты failed: {ex.Message}"); }
+
+            try { new LocalizationDataSetTableAdapters.СловариTableAdapter().Fill(dataSet.Словари); }
+            catch (Exception ex) { Debug.WriteLine($"[Fill] Словари failed: {ex.Message}"); }
+
+            try { new LocalizationDataSetTableAdapters.СотрудникиTableAdapter().Fill(dataSet.Сотрудники); }
+            catch (Exception ex) { Debug.WriteLine($"[Fill] Сотрудники failed: {ex.Message}"); }
         }
 
         public static void UpdateAllTables(LocalizationDataSet dataSet)
@@ -123,6 +124,30 @@ namespace localization_studio_db
 
             try { new LocalizationDataSetTableAdapters.ЯзыкиTableAdapter().Update(dataSet.Языки); }
             catch (Exception ex) { Debug.WriteLine($"[Update] Языки failed: {ex.Message}"); }
+        }
+
+        public static void ClearAllTables(LocalizationDataSet dataSet)
+        {
+            if (dataSet == null) throw new ArgumentNullException(nameof(dataSet));
+
+            dataSet.Вид_медиа.Clear();
+            dataSet.Владение_языками.Clear();
+            dataSet.Должность.Clear();
+            dataSet.Задачи.Clear();
+            dataSet.Клиенты.Clear();
+            dataSet.Контракты.Clear();
+            dataSet.Медиа.Clear();
+            dataSet.Приоритет.Clear();
+            dataSet.Проектные_команды.Clear();
+            dataSet.Проектные_роли.Clear();
+            dataSet.Проекты.Clear();
+            dataSet.Словари.Clear();
+            dataSet.Сотрудники.Clear();
+            dataSet.Статус_выполнения.Clear();
+            dataSet.Статус_документации.Clear();
+            dataSet.Статус_оплаты.Clear();
+            dataSet.Уровень_языка.Clear();
+            dataSet.Языки.Clear();
         }
 
     }

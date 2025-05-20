@@ -1760,7 +1760,7 @@ namespace localization_studio_db {
                                 this.columnКод_должности}, true));
                 this.columnКод_должности.AllowDBNull = false;
                 this.columnКод_должности.Unique = true;
-                this.columnНазвание_должности.MaxLength = 20;
+                this.columnНазвание_должности.MaxLength = 50;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -3583,8 +3583,6 @@ namespace localization_studio_db {
             
             private global::System.Data.DataColumn columnКод_проекта;
             
-            private global::System.Data.DataColumn columnСтатус_проекта;
-            
             private global::System.Data.DataColumn columnКод_ролей;
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -3638,14 +3636,6 @@ namespace localization_studio_db {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public global::System.Data.DataColumn Статус_проектаColumn {
-                get {
-                    return this.columnСтатус_проекта;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public global::System.Data.DataColumn Код_ролейColumn {
                 get {
                     return this.columnКод_ролей;
@@ -3689,15 +3679,14 @@ namespace localization_studio_db {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public Проектные_командыRow AddПроектные_командыRow(int Код_проекта, byte Статус_проекта, Проектные_ролиRow parentПроектные_ролиRowByПроектные_ролиПроектные_команды) {
+            public Проектные_командыRow AddПроектные_командыRow(int Код_проекта, Проектные_ролиRow parentПроектные_ролиRowByПроектные_ролиПроектные_команды) {
                 Проектные_командыRow rowПроектные_командыRow = ((Проектные_командыRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         null,
                         Код_проекта,
-                        Статус_проекта,
                         null};
                 if ((parentПроектные_ролиRowByПроектные_ролиПроектные_команды != null)) {
-                    columnValuesArray[3] = parentПроектные_ролиRowByПроектные_ролиПроектные_команды[0];
+                    columnValuesArray[2] = parentПроектные_ролиRowByПроектные_ролиПроектные_команды[0];
                 }
                 rowПроектные_командыRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowПроектные_командыRow);
@@ -3730,7 +3719,6 @@ namespace localization_studio_db {
             internal void InitVars() {
                 this.columnКод_команды = base.Columns["Код_команды"];
                 this.columnКод_проекта = base.Columns["Код_проекта"];
-                this.columnСтатус_проекта = base.Columns["Статус_проекта"];
                 this.columnКод_ролей = base.Columns["Код_ролей"];
             }
             
@@ -3741,8 +3729,6 @@ namespace localization_studio_db {
                 base.Columns.Add(this.columnКод_команды);
                 this.columnКод_проекта = new global::System.Data.DataColumn("Код_проекта", typeof(int), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnКод_проекта);
-                this.columnСтатус_проекта = new global::System.Data.DataColumn("Статус_проекта", typeof(byte), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnСтатус_проекта);
                 this.columnКод_ролей = new global::System.Data.DataColumn("Код_ролей", typeof(int), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnКод_ролей);
                 this.Constraints.Add(new global::System.Data.UniqueConstraint("Constraint1", new global::System.Data.DataColumn[] {
@@ -7941,22 +7927,6 @@ namespace localization_studio_db {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public byte Статус_проекта {
-                get {
-                    try {
-                        return ((byte)(this[this.tableПроектные_команды.Статус_проектаColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'Статус_проекта\' in table \'Проектные_команды\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableПроектные_команды.Статус_проектаColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public int Код_ролей {
                 get {
                     try {
@@ -7992,18 +7962,6 @@ namespace localization_studio_db {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public void SetКод_проектаNull() {
                 this[this.tableПроектные_команды.Код_проектаColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public bool IsСтатус_проектаNull() {
-                return this.IsNull(this.tableПроектные_команды.Статус_проектаColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public void SetСтатус_проектаNull() {
-                this[this.tableПроектные_команды.Статус_проектаColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -13332,43 +13290,36 @@ namespace localization_studio_db.LocalizationDataSetTableAdapters {
             tableMapping.DataSetTable = "Проектные_команды";
             tableMapping.ColumnMappings.Add("Код_команды", "Код_команды");
             tableMapping.ColumnMappings.Add("Код_проекта", "Код_проекта");
-            tableMapping.ColumnMappings.Add("Статус_проекта", "Статус_проекта");
             tableMapping.ColumnMappings.Add("Код_ролей", "Код_ролей");
             this._adapter.TableMappings.Add(tableMapping);
             this._adapter.DeleteCommand = new global::System.Data.OleDb.OleDbCommand();
             this._adapter.DeleteCommand.Connection = this.Connection;
             this._adapter.DeleteCommand.CommandText = "DELETE FROM `Проектные_команды` WHERE ((`Код_команды` = ?) AND ((? = 1 AND `Код_п" +
-                "роекта` IS NULL) OR (`Код_проекта` = ?)) AND ((? = 1 AND `Статус_проекта` IS NUL" +
-                "L) OR (`Статус_проекта` = ?)) AND ((? = 1 AND `Код_ролей` IS NULL) OR (`Код_роле" +
-                "й` = ?)))";
+                "роекта` IS NULL) OR (`Код_проекта` = ?)) AND ((? = 1 AND `Код_ролей` IS NULL) OR" +
+                " (`Код_ролей` = ?)))";
             this._adapter.DeleteCommand.CommandType = global::System.Data.CommandType.Text;
             this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.OleDb.OleDbParameter("Original_Код_команды", global::System.Data.OleDb.OleDbType.Integer, 0, global::System.Data.ParameterDirection.Input, ((byte)(0)), ((byte)(0)), "Код_команды", global::System.Data.DataRowVersion.Original, false, null));
             this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.OleDb.OleDbParameter("IsNull_Код_проекта", global::System.Data.OleDb.OleDbType.Integer, 0, global::System.Data.ParameterDirection.Input, ((byte)(0)), ((byte)(0)), "Код_проекта", global::System.Data.DataRowVersion.Original, true, null));
             this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.OleDb.OleDbParameter("Original_Код_проекта", global::System.Data.OleDb.OleDbType.Integer, 0, global::System.Data.ParameterDirection.Input, ((byte)(0)), ((byte)(0)), "Код_проекта", global::System.Data.DataRowVersion.Original, false, null));
-            this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.OleDb.OleDbParameter("IsNull_Статус_проекта", global::System.Data.OleDb.OleDbType.Integer, 0, global::System.Data.ParameterDirection.Input, ((byte)(0)), ((byte)(0)), "Статус_проекта", global::System.Data.DataRowVersion.Original, true, null));
-            this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.OleDb.OleDbParameter("Original_Статус_проекта", global::System.Data.OleDb.OleDbType.UnsignedTinyInt, 0, global::System.Data.ParameterDirection.Input, ((byte)(0)), ((byte)(0)), "Статус_проекта", global::System.Data.DataRowVersion.Original, false, null));
             this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.OleDb.OleDbParameter("IsNull_Код_ролей", global::System.Data.OleDb.OleDbType.Integer, 0, global::System.Data.ParameterDirection.Input, ((byte)(0)), ((byte)(0)), "Код_ролей", global::System.Data.DataRowVersion.Original, true, null));
             this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.OleDb.OleDbParameter("Original_Код_ролей", global::System.Data.OleDb.OleDbType.Integer, 0, global::System.Data.ParameterDirection.Input, ((byte)(0)), ((byte)(0)), "Код_ролей", global::System.Data.DataRowVersion.Original, false, null));
             this._adapter.InsertCommand = new global::System.Data.OleDb.OleDbCommand();
             this._adapter.InsertCommand.Connection = this.Connection;
-            this._adapter.InsertCommand.CommandText = "INSERT INTO `Проектные_команды` (`Код_проекта`, `Статус_проекта`, `Код_ролей`) VA" +
-                "LUES (?, ?, ?)";
+            this._adapter.InsertCommand.CommandText = "INSERT INTO `Проектные_команды` (`Код_проекта`, `Код_ролей`) VALUES (?, ?)";
             this._adapter.InsertCommand.CommandType = global::System.Data.CommandType.Text;
             this._adapter.InsertCommand.Parameters.Add(new global::System.Data.OleDb.OleDbParameter("Код_проекта", global::System.Data.OleDb.OleDbType.Integer, 0, global::System.Data.ParameterDirection.Input, ((byte)(0)), ((byte)(0)), "Код_проекта", global::System.Data.DataRowVersion.Current, false, null));
-            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.OleDb.OleDbParameter("Статус_проекта", global::System.Data.OleDb.OleDbType.UnsignedTinyInt, 0, global::System.Data.ParameterDirection.Input, ((byte)(0)), ((byte)(0)), "Статус_проекта", global::System.Data.DataRowVersion.Current, false, null));
             this._adapter.InsertCommand.Parameters.Add(new global::System.Data.OleDb.OleDbParameter("Код_ролей", global::System.Data.OleDb.OleDbType.Integer, 0, global::System.Data.ParameterDirection.Input, ((byte)(0)), ((byte)(0)), "Код_ролей", global::System.Data.DataRowVersion.Current, false, null));
             this._adapter.UpdateCommand = new global::System.Data.OleDb.OleDbCommand();
             this._adapter.UpdateCommand.Connection = this.Connection;
-            this._adapter.UpdateCommand.CommandText = @"UPDATE `Проектные_команды` SET `Код_проекта` = ?, `Статус_проекта` = ?, `Код_ролей` = ? WHERE ((`Код_команды` = ?) AND ((? = 1 AND `Код_проекта` IS NULL) OR (`Код_проекта` = ?)) AND ((? = 1 AND `Статус_проекта` IS NULL) OR (`Статус_проекта` = ?)) AND ((? = 1 AND `Код_ролей` IS NULL) OR (`Код_ролей` = ?)))";
+            this._adapter.UpdateCommand.CommandText = "UPDATE `Проектные_команды` SET `Код_проекта` = ?, `Код_ролей` = ? WHERE ((`Код_ко" +
+                "манды` = ?) AND ((? = 1 AND `Код_проекта` IS NULL) OR (`Код_проекта` = ?)) AND (" +
+                "(? = 1 AND `Код_ролей` IS NULL) OR (`Код_ролей` = ?)))";
             this._adapter.UpdateCommand.CommandType = global::System.Data.CommandType.Text;
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.OleDb.OleDbParameter("Код_проекта", global::System.Data.OleDb.OleDbType.Integer, 0, global::System.Data.ParameterDirection.Input, ((byte)(0)), ((byte)(0)), "Код_проекта", global::System.Data.DataRowVersion.Current, false, null));
-            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.OleDb.OleDbParameter("Статус_проекта", global::System.Data.OleDb.OleDbType.UnsignedTinyInt, 0, global::System.Data.ParameterDirection.Input, ((byte)(0)), ((byte)(0)), "Статус_проекта", global::System.Data.DataRowVersion.Current, false, null));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.OleDb.OleDbParameter("Код_ролей", global::System.Data.OleDb.OleDbType.Integer, 0, global::System.Data.ParameterDirection.Input, ((byte)(0)), ((byte)(0)), "Код_ролей", global::System.Data.DataRowVersion.Current, false, null));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.OleDb.OleDbParameter("Original_Код_команды", global::System.Data.OleDb.OleDbType.Integer, 0, global::System.Data.ParameterDirection.Input, ((byte)(0)), ((byte)(0)), "Код_команды", global::System.Data.DataRowVersion.Original, false, null));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.OleDb.OleDbParameter("IsNull_Код_проекта", global::System.Data.OleDb.OleDbType.Integer, 0, global::System.Data.ParameterDirection.Input, ((byte)(0)), ((byte)(0)), "Код_проекта", global::System.Data.DataRowVersion.Original, true, null));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.OleDb.OleDbParameter("Original_Код_проекта", global::System.Data.OleDb.OleDbType.Integer, 0, global::System.Data.ParameterDirection.Input, ((byte)(0)), ((byte)(0)), "Код_проекта", global::System.Data.DataRowVersion.Original, false, null));
-            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.OleDb.OleDbParameter("IsNull_Статус_проекта", global::System.Data.OleDb.OleDbType.Integer, 0, global::System.Data.ParameterDirection.Input, ((byte)(0)), ((byte)(0)), "Статус_проекта", global::System.Data.DataRowVersion.Original, true, null));
-            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.OleDb.OleDbParameter("Original_Статус_проекта", global::System.Data.OleDb.OleDbType.UnsignedTinyInt, 0, global::System.Data.ParameterDirection.Input, ((byte)(0)), ((byte)(0)), "Статус_проекта", global::System.Data.DataRowVersion.Original, false, null));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.OleDb.OleDbParameter("IsNull_Код_ролей", global::System.Data.OleDb.OleDbType.Integer, 0, global::System.Data.ParameterDirection.Input, ((byte)(0)), ((byte)(0)), "Код_ролей", global::System.Data.DataRowVersion.Original, true, null));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.OleDb.OleDbParameter("Original_Код_ролей", global::System.Data.OleDb.OleDbType.Integer, 0, global::System.Data.ParameterDirection.Input, ((byte)(0)), ((byte)(0)), "Код_ролей", global::System.Data.DataRowVersion.Original, false, null));
         }
@@ -13386,8 +13337,7 @@ namespace localization_studio_db.LocalizationDataSetTableAdapters {
             this._commandCollection = new global::System.Data.OleDb.OleDbCommand[1];
             this._commandCollection[0] = new global::System.Data.OleDb.OleDbCommand();
             this._commandCollection[0].Connection = this.Connection;
-            this._commandCollection[0].CommandText = "SELECT Код_команды, Код_проекта, Статус_проекта, Код_ролей FROM Проектные_команды" +
-                "";
+            this._commandCollection[0].CommandText = "SELECT Код_команды, Код_проекта, Код_ролей FROM Проектные_команды";
             this._commandCollection[0].CommandType = global::System.Data.CommandType.Text;
         }
         
@@ -13448,7 +13398,7 @@ namespace localization_studio_db.LocalizationDataSetTableAdapters {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Delete, true)]
-        public virtual int Delete(int Original_Код_команды, global::System.Nullable<int> Original_Код_проекта, global::System.Nullable<byte> Original_Статус_проекта, global::System.Nullable<int> Original_Код_ролей) {
+        public virtual int Delete(int Original_Код_команды, global::System.Nullable<int> Original_Код_проекта, global::System.Nullable<int> Original_Код_ролей) {
             this.Adapter.DeleteCommand.Parameters[0].Value = ((int)(Original_Код_команды));
             if ((Original_Код_проекта.HasValue == true)) {
                 this.Adapter.DeleteCommand.Parameters[1].Value = ((object)(0));
@@ -13458,21 +13408,13 @@ namespace localization_studio_db.LocalizationDataSetTableAdapters {
                 this.Adapter.DeleteCommand.Parameters[1].Value = ((object)(1));
                 this.Adapter.DeleteCommand.Parameters[2].Value = global::System.DBNull.Value;
             }
-            if ((Original_Статус_проекта.HasValue == true)) {
+            if ((Original_Код_ролей.HasValue == true)) {
                 this.Adapter.DeleteCommand.Parameters[3].Value = ((object)(0));
-                this.Adapter.DeleteCommand.Parameters[4].Value = ((byte)(Original_Статус_проекта.Value));
+                this.Adapter.DeleteCommand.Parameters[4].Value = ((int)(Original_Код_ролей.Value));
             }
             else {
                 this.Adapter.DeleteCommand.Parameters[3].Value = ((object)(1));
                 this.Adapter.DeleteCommand.Parameters[4].Value = global::System.DBNull.Value;
-            }
-            if ((Original_Код_ролей.HasValue == true)) {
-                this.Adapter.DeleteCommand.Parameters[5].Value = ((object)(0));
-                this.Adapter.DeleteCommand.Parameters[6].Value = ((int)(Original_Код_ролей.Value));
-            }
-            else {
-                this.Adapter.DeleteCommand.Parameters[5].Value = ((object)(1));
-                this.Adapter.DeleteCommand.Parameters[6].Value = global::System.DBNull.Value;
             }
             global::System.Data.ConnectionState previousConnectionState = this.Adapter.DeleteCommand.Connection.State;
             if (((this.Adapter.DeleteCommand.Connection.State & global::System.Data.ConnectionState.Open) 
@@ -13494,24 +13436,18 @@ namespace localization_studio_db.LocalizationDataSetTableAdapters {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Insert, true)]
-        public virtual int Insert(global::System.Nullable<int> Код_проекта, global::System.Nullable<byte> Статус_проекта, global::System.Nullable<int> Код_ролей) {
+        public virtual int Insert(global::System.Nullable<int> Код_проекта, global::System.Nullable<int> Код_ролей) {
             if ((Код_проекта.HasValue == true)) {
                 this.Adapter.InsertCommand.Parameters[0].Value = ((int)(Код_проекта.Value));
             }
             else {
                 this.Adapter.InsertCommand.Parameters[0].Value = global::System.DBNull.Value;
             }
-            if ((Статус_проекта.HasValue == true)) {
-                this.Adapter.InsertCommand.Parameters[1].Value = ((byte)(Статус_проекта.Value));
+            if ((Код_ролей.HasValue == true)) {
+                this.Adapter.InsertCommand.Parameters[1].Value = ((int)(Код_ролей.Value));
             }
             else {
                 this.Adapter.InsertCommand.Parameters[1].Value = global::System.DBNull.Value;
-            }
-            if ((Код_ролей.HasValue == true)) {
-                this.Adapter.InsertCommand.Parameters[2].Value = ((int)(Код_ролей.Value));
-            }
-            else {
-                this.Adapter.InsertCommand.Parameters[2].Value = global::System.DBNull.Value;
             }
             global::System.Data.ConnectionState previousConnectionState = this.Adapter.InsertCommand.Connection.State;
             if (((this.Adapter.InsertCommand.Connection.State & global::System.Data.ConnectionState.Open) 
@@ -13533,49 +13469,35 @@ namespace localization_studio_db.LocalizationDataSetTableAdapters {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Update, true)]
-        public virtual int Update(global::System.Nullable<int> Код_проекта, global::System.Nullable<byte> Статус_проекта, global::System.Nullable<int> Код_ролей, int Original_Код_команды, global::System.Nullable<int> Original_Код_проекта, global::System.Nullable<byte> Original_Статус_проекта, global::System.Nullable<int> Original_Код_ролей) {
+        public virtual int Update(global::System.Nullable<int> Код_проекта, global::System.Nullable<int> Код_ролей, int Original_Код_команды, global::System.Nullable<int> Original_Код_проекта, global::System.Nullable<int> Original_Код_ролей) {
             if ((Код_проекта.HasValue == true)) {
                 this.Adapter.UpdateCommand.Parameters[0].Value = ((int)(Код_проекта.Value));
             }
             else {
                 this.Adapter.UpdateCommand.Parameters[0].Value = global::System.DBNull.Value;
             }
-            if ((Статус_проекта.HasValue == true)) {
-                this.Adapter.UpdateCommand.Parameters[1].Value = ((byte)(Статус_проекта.Value));
+            if ((Код_ролей.HasValue == true)) {
+                this.Adapter.UpdateCommand.Parameters[1].Value = ((int)(Код_ролей.Value));
             }
             else {
                 this.Adapter.UpdateCommand.Parameters[1].Value = global::System.DBNull.Value;
             }
-            if ((Код_ролей.HasValue == true)) {
-                this.Adapter.UpdateCommand.Parameters[2].Value = ((int)(Код_ролей.Value));
-            }
-            else {
-                this.Adapter.UpdateCommand.Parameters[2].Value = global::System.DBNull.Value;
-            }
-            this.Adapter.UpdateCommand.Parameters[3].Value = ((int)(Original_Код_команды));
+            this.Adapter.UpdateCommand.Parameters[2].Value = ((int)(Original_Код_команды));
             if ((Original_Код_проекта.HasValue == true)) {
-                this.Adapter.UpdateCommand.Parameters[4].Value = ((object)(0));
-                this.Adapter.UpdateCommand.Parameters[5].Value = ((int)(Original_Код_проекта.Value));
+                this.Adapter.UpdateCommand.Parameters[3].Value = ((object)(0));
+                this.Adapter.UpdateCommand.Parameters[4].Value = ((int)(Original_Код_проекта.Value));
             }
             else {
-                this.Adapter.UpdateCommand.Parameters[4].Value = ((object)(1));
-                this.Adapter.UpdateCommand.Parameters[5].Value = global::System.DBNull.Value;
-            }
-            if ((Original_Статус_проекта.HasValue == true)) {
-                this.Adapter.UpdateCommand.Parameters[6].Value = ((object)(0));
-                this.Adapter.UpdateCommand.Parameters[7].Value = ((byte)(Original_Статус_проекта.Value));
-            }
-            else {
-                this.Adapter.UpdateCommand.Parameters[6].Value = ((object)(1));
-                this.Adapter.UpdateCommand.Parameters[7].Value = global::System.DBNull.Value;
+                this.Adapter.UpdateCommand.Parameters[3].Value = ((object)(1));
+                this.Adapter.UpdateCommand.Parameters[4].Value = global::System.DBNull.Value;
             }
             if ((Original_Код_ролей.HasValue == true)) {
-                this.Adapter.UpdateCommand.Parameters[8].Value = ((object)(0));
-                this.Adapter.UpdateCommand.Parameters[9].Value = ((int)(Original_Код_ролей.Value));
+                this.Adapter.UpdateCommand.Parameters[5].Value = ((object)(0));
+                this.Adapter.UpdateCommand.Parameters[6].Value = ((int)(Original_Код_ролей.Value));
             }
             else {
-                this.Adapter.UpdateCommand.Parameters[8].Value = ((object)(1));
-                this.Adapter.UpdateCommand.Parameters[9].Value = global::System.DBNull.Value;
+                this.Adapter.UpdateCommand.Parameters[5].Value = ((object)(1));
+                this.Adapter.UpdateCommand.Parameters[6].Value = global::System.DBNull.Value;
             }
             global::System.Data.ConnectionState previousConnectionState = this.Adapter.UpdateCommand.Connection.State;
             if (((this.Adapter.UpdateCommand.Connection.State & global::System.Data.ConnectionState.Open) 
