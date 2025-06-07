@@ -54,7 +54,7 @@
             this.buttonPassword.Text = "OK";
             this.buttonPassword.UseVisualStyleBackColor = true;
             // 
-            // AdminPasswordPrompt
+            // PasswordForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 24F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -65,7 +65,7 @@
             this.Margin = new System.Windows.Forms.Padding(4);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "AdminPasswordPrompt";
+            this.Name = "PasswordForm";
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Пароль";

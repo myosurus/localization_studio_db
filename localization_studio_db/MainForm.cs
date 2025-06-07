@@ -16,12 +16,9 @@ namespace localization_studio_db
 
         private readonly HashSet<string> adminOnlyTables = new HashSet<string>
         {
-            "Вид_медиа",
             "Должность",
             "Приоритет",
             "Статус_выполнения",
-            "Статус_документации",
-            "Статус_оплаты",
             "Уровень_языка",
             "Языки"
         };
@@ -64,7 +61,13 @@ namespace localization_studio_db
                     return;
                 }
 
-                dataGridViewTable.DataSource = localizationDataSet.Tables[selectedTable];
+                DataTable table = localizationDataSet.Tables[selectedTable];
+
+                dataGridViewTable.AutoGenerateColumns = false;
+                dataGridViewTable.Columns.Clear();
+
+                ReplaceForeignKeysWithComboBoxes(table, selectedTable); 
+                dataGridViewTable.DataSource = table;
 
                 bool allowEdit = isAdminMode || !adminOnlyTables.Contains(selectedTable);
                 dataGridViewTable.ReadOnly = !allowEdit;
@@ -103,41 +106,64 @@ namespace localization_studio_db
 
         private void toolStripAbout_Click(object sender, EventArgs e)
         {
-            var aboutForm = new AboutForm();
-            aboutForm.Show();
+            new AboutForm().Show();
         }
 
-        private void toolContractActive_Click(object sender, EventArgs e)
+        private void ApplyFilter(DataView view, string tableName)
         {
             try
             {
-                DataView activeContractsView = new DataView(localizationDataSet.Контракты)
-                {
-                    RowFilter = "Статус_выполнения <> 3"
-                };
-                dataGridViewTable.DataSource = activeContractsView;
+                dataGridViewTable.AutoGenerateColumns = false;
+                dataGridViewTable.Columns.Clear();
+
+                ReplaceForeignKeysWithComboBoxes(view.Table, tableName); 
+                dataGridViewTable.DataSource = view;
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ShowError(ex);
             }
         }
 
-        private void toolContractUnpaid_Click(object sender, EventArgs e)
+        private void ApplyFilter(DataTable table, string rowFilter)
+        {
+            ApplyFilter(new DataView(table) { RowFilter = rowFilter }, table.TableName);
+        }
+
+        private void ApplyFilter(Func<DataTable> getTable, string rowFilter)
+        {
+            var table = getTable();
+            ApplyFilter(new DataView(table) { RowFilter = rowFilter }, table.TableName);
+        }
+
+        private void ApplyInputFilter(Func<string, string> buildFilter, DataTable table, string promptTitle, string promptText)
         {
             try
             {
-                DataView unpaidContractsView = new DataView(localizationDataSet.Контракты)
+                string input = ShowInputDialog(promptTitle, promptText);
+                if (!string.IsNullOrWhiteSpace(input))
                 {
-                    RowFilter = "Статус_оплаты <> 3"
-                };
-                dataGridViewTable.DataSource = unpaidContractsView;
+                    var view = new DataView(table) { RowFilter = buildFilter(input) };
+                    ApplyFilter(view, table.TableName);
+                }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ShowError(ex);
             }
         }
+
+
+        private void ShowError(Exception ex)
+        {
+            MessageBox.Show($"Ошибка: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
+        private void toolContractActive_Click(object sender, EventArgs e) =>
+            ApplyFilter(localizationDataSet.Контракты, "Статус_выполнения <> 3");
+
+        private void toolContractUnpaid_Click(object sender, EventArgs e) =>
+            ApplyFilter(localizationDataSet.Контракты, "Статус_оплаты <> 'Оплачено'");
 
         private void toolContractEndSoon_Click(object sender, EventArgs e)
         {
@@ -145,123 +171,258 @@ namespace localization_studio_db
             {
                 DateTime today = DateTime.Today;
                 DateTime soon = today.AddDays(30);
-
-                DataView endingSoonView = new DataView(localizationDataSet.Контракты)
-                {
-                    RowFilter = $"Дата_окончания >= #{today:MM/dd/yyyy}# AND Дата_окончания <= #{soon:MM/dd/yyyy}#"
-                };
-                dataGridViewTable.DataSource = endingSoonView;
+                string filter = $"Дата_окончания >= #{today:MM/dd/yyyy}# AND Дата_окончания <= #{soon:MM/dd/yyyy}#";
+                dataGridViewTable.DataSource = new DataView(localizationDataSet.Контракты) { RowFilter = filter };
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ShowError(ex);
             }
-
         }
 
-        private void toolContractByClient_Click(object sender, EventArgs e)
+        private void toolContractByClient_Click(object sender, EventArgs e) =>
+            ApplyInputFilter(input => int.TryParse(input, out int id) ?
+            $"Код_клиента = {id}" : "1=0", localizationDataSet.Контракты, "Фильтр по клиенту", "Введите код клиента: ");
+
+        //this
+        private void toolContractNonarchived_Click(object sender, EventArgs e) =>
+            ApplyFilter(localizationDataSet.Контракты, "Статус_документации <> 'Архив' AND Статус_выполнения = 3");
+
+        private void toolProjectPriority_Click(object sender, EventArgs e) =>
+            ApplyFilter(localizationDataSet.Проекты, "Приоритет = 1");
+
+        private void toolProjectOpen_Click(object sender, EventArgs e) =>
+            ApplyFilter(localizationDataSet.Проекты, "Статус_проекта <> 3");
+
+        private void toolProjectNoFiles_Click(object sender, EventArgs e) =>
+            ApplyFilter(localizationDataSet.Проекты, "Файлы_проекта IS NULL OR Файлы_проекта = ''");
+
+        private void toolProjectByContract_Click(object sender, EventArgs e) =>
+            ApplyInputFilter(input => $"Код_контракта = {input}", localizationDataSet.Проекты, "Фильтр по контракту", "Введите код контракта: ");
+
+        private void toolTaskPriority_Click(object sender, EventArgs e) =>
+            ApplyFilter(localizationDataSet.Задачи, "Приоритет = 1");
+
+        private void toolTaskIncomplete_Click(object sender, EventArgs e) =>
+            ApplyFilter(localizationDataSet.Задачи, "Статус_задачи <> 3");
+
+        private void toolTaskNoFiles_Click(object sender, EventArgs e) =>
+            ApplyFilter(localizationDataSet.Задачи, "ISNULL(Файлы_задачи, '') = ''");
+
+        private void toolTaskByProject_Click(object sender, EventArgs e) =>
+            ApplyInputFilter(input => int.TryParse(input, out int id)
+            ? $"Код_проекта = {id}" : "1=0", localizationDataSet.Задачи, "Фильтр по проекту", "Введите код проекта: ");
+
+        private void toolTaskByEmployee_Click(object sender, EventArgs e) =>
+            ApplyInputFilter(input => int.TryParse(input, out int id)
+            ? $"Исполнитель = {id}" : "1=0", localizationDataSet.Задачи, "Фильтр по сотруднику", "Введите код сотрудника: ");
+
+        private void toolEmployeeJob_Click(object sender, EventArgs e) =>
+            ApplyInputFilter(input => int.TryParse(input, out int id)
+            ? $"Должность = {id}" : "1=0", localizationDataSet.Сотрудники, "Фильтр по должности", "Введите код должности: ");
+
+        private void toolEmployeeLastName_Click(object sender, EventArgs e) =>
+            ApplyInputFilter(input => $"Фамилия LIKE '%{input}%'", localizationDataSet.Сотрудники, "Фильтр по фамилии", "Введите фамилию: ");
+
+        private void toolEmployeeBonus_Click(object sender, EventArgs e) =>
+            ApplyFilter(localizationDataSet.Сотрудники, "Надбавка > 5000");
+
+        private void toolEmployeeNoEmail_Click(object sender, EventArgs e) =>
+            ApplyFilter(localizationDataSet.Сотрудники, "ISNULL(Email, '') = ''");
+
+
+        private string ShowInputDialog(string title, string prompt)
+        {
+            Form promptForm = new Form()
+            {
+                Width = 400,
+                Height = 150,
+                FormBorderStyle = FormBorderStyle.FixedDialog,
+                Text = title,
+                StartPosition = FormStartPosition.CenterScreen
+            };
+
+            Label textLabel = new Label() { Left = 20, Top = 20, Text = prompt, AutoSize = true };
+            TextBox inputBox = new TextBox() { Left = 20, Top = 50, Width = 340 };
+            Button confirmation = new Button() { Text = "OK", Left = 270, Width = 90, Top = 80, DialogResult = DialogResult.OK };
+
+            confirmation.Click += (sender, e) => { promptForm.Close(); };
+
+            promptForm.Controls.Add(textLabel);
+            promptForm.Controls.Add(inputBox);
+            promptForm.Controls.Add(confirmation);
+            promptForm.AcceptButton = confirmation;
+
+            return promptForm.ShowDialog() == DialogResult.OK ? inputBox.Text : null;
+        }
+
+        private void toolOLanguages_Click(object sender, EventArgs e)
         {
             try
             {
-                string input = ShowInputDialog("Фильтр по клиенту", "Введите код клиента: ");
+                var result = new DataTable();
+                result.Columns.Add("ФИО");
+                result.Columns.Add("Язык");
+                result.Columns.Add("Уровень");
 
-                if (int.TryParse(input, out int clientId))
+                foreach (var владение in localizationDataSet.Владение_языками)
                 {
-                    DataView byClientView = new DataView(localizationDataSet.Контракты)
+                    var сотрудник = localizationDataSet.Сотрудники.FindByКод_сотрудника(владение.Код_сотрудника);
+                    var язык = localizationDataSet.Языки.FindByКод_языка(владение.Код_языка);
+
+                    if (сотрудник != null && язык != null)
                     {
-                        RowFilter = $"Код_клиента = {clientId}"
-                    };
-                    dataGridViewTable.DataSource = byClientView;
+                        result.Rows.Add(
+                            $"{сотрудник.Фамилия} {сотрудник.Имя} {сотрудник.Отчество}",
+                            язык.Язык,
+                            владение.Код_уровня
+                        );
+                    }
                 }
+
+                dataGridViewTable.AutoGenerateColumns = true;
+                dataGridViewTable.DataSource = result;
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
-        private void toolContractNonarchived_Click(object sender, EventArgs e)
+        private void toolOProjectEmployee_Click(object sender, EventArgs e)
         {
             try
             {
-                DataView nonArchivedView = new DataView(localizationDataSet.Контракты)
-                {
-                    RowFilter = "Статус_документации <> 5 AND Статус_выполнения = 3"
-                };
-                dataGridViewTable.DataSource = nonArchivedView;
+                //string input = ShowInputDialog("Фильтр по сотруднику", "Введите код сотрудника: ");
+                //if (!int.TryParse(input, out int empId)) return;
+
+                //var query = from team in localizationDataSet.Проектные_роли
+                //            where team.Код_сотрудника == empId
+                //            join project in localizationDataSet.Проекты
+                //            on team.Код_проекта equals project.Код_проекта
+                //            select project;
+
+                //var result = localizationDataSet.Проекты.Clone();
+                //foreach (var row in query)
+                //    result.ImportRow(row);
+
+                //dataGridViewTable.DataSource = result;
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
-        private void toolProjectPriority_Click(object sender, EventArgs e)
+        private void toolOMediaLanguage_Click(object sender, EventArgs e)
         {
             try
             {
-                var projectsView = new DataView(localizationDataSet.Проекты)
-                {
-                    RowFilter = "Приоритет = 1"
-                };
-                dataGridViewTable.DataSource = projectsView;
+                string input = ShowInputDialog("Фильтр по языку", "Введите код языка: ");
+                if (!int.TryParse(input, out int langId)) return;
+
+                var query = localizationDataSet.Медиа.AsEnumerable()
+                    .Where(row => row.Field<byte>("Язык") == langId);
+
+                var result = localizationDataSet.Медиа.Clone();
+                foreach (var row in query)
+                    result.ImportRow(row);
+
+                dataGridViewTable.AutoGenerateColumns = true;
+                dataGridViewTable.DataSource = result;
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
-        private void toolProjectOpen_Click(object sender, EventArgs e)
+        private void toolOPairs_Click(object sender, EventArgs e)
         {
             try
             {
-                var projectsView = new DataView(localizationDataSet.Проекты)
-                {
-                    RowFilter = "Статус_проекта <> 3"
-                };
-                dataGridViewTable.DataSource = projectsView;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Ошибка: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
+                var result = new DataTable();
+                result.Columns.Add("Язык 1");
+                result.Columns.Add("Язык 2");
+                result.Columns.Add("Ссылка на словарь");
 
-        private void toolProjectNoFiles_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                var projectsView = new DataView(localizationDataSet.Проекты)
+                foreach (var row in localizationDataSet.Словари)
                 {
-                    RowFilter = "Файлы_проекта IS NULL OR Файлы_проекта = ''"
-                };
-                dataGridViewTable.DataSource = projectsView;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Ошибка: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
+                    var lang1 = localizationDataSet.Языки.FindByКод_языка(row.Язык_оригинала);
+                    var lang2 = localizationDataSet.Языки.FindByКод_языка(row.Язык_перевода);
 
-        private void toolProjectByContract_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                string projectId = ShowInputDialog("Фильтр по контракту", "Введите код контракта: ");
-
-                if (!string.IsNullOrWhiteSpace(projectId))
-                {
-                    DataView view = new DataView(localizationDataSet.Проекты)
+                    if (lang1 != null && lang2 != null)
                     {
-                        RowFilter = $"Код_контракта = {projectId}"
-                    };
-                    dataGridViewTable.DataSource = view;
+                        result.Rows.Add(lang1.Язык, lang2.Язык, row.Ссылка_на_словарь);
+                    }
                 }
+
+                dataGridViewTable.AutoGenerateColumns = true;
+                dataGridViewTable.DataSource = result;
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void toolProjectStatus_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var query = localizationDataSet.Проекты.AsEnumerable()
+                    .GroupBy(p => p.Field<byte>("Статус_проекта"))
+                    .Select(g => new { Статус = g.Key, Количество = g.Count() });
+
+                var result = new DataTable();
+                result.Columns.Add("Статус");
+                result.Columns.Add("Количество");
+
+                foreach (var row in query)
+                    result.Rows.Add(row.Статус, row.Количество);
+
+                dataGridViewTable.AutoGenerateColumns = true;
+                dataGridViewTable.DataSource = result;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void toolSOPayout_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var result = new DataTable();
+                result.Columns.Add("ФИО");
+                result.Columns.Add("Должность");
+                result.Columns.Add("Оклад", typeof(decimal));
+                result.Columns.Add("Надбавка", typeof(decimal));
+                result.Columns.Add("Сумма", typeof(decimal));
+
+                foreach (var сотрудник in localizationDataSet.Сотрудники)
+                {
+                    var должность = localizationDataSet.Должность.FindByКод_должности(сотрудник.Должность);
+                    if (должность != null)
+                    {
+                        decimal оклад = должность.Стандартный_оклад;
+                        decimal надбавка = сотрудник.Надбавка;
+                        result.Rows.Add(
+                            $"{сотрудник.Фамилия} {сотрудник.Имя} {сотрудник.Отчество}",
+                            должность.Название_должности,
+                            оклад,
+                            надбавка,
+                            оклад + надбавка
+                        );
+                    }
+                }
+                dataGridViewTable.AutoGenerateColumns = true;
+                dataGridViewTable.DataSource = result;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -283,171 +444,8 @@ namespace localization_studio_db
                 foreach (var proj in query)
                     result.ImportRow(proj);
 
+                dataGridViewTable.AutoGenerateColumns = true;
                 dataGridViewTable.DataSource = result;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Ошибка: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        private void toolTaskPriority_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                DataView highPriorityView = new DataView(localizationDataSet.Задачи)
-                {
-                    RowFilter = "Приоритет = 1"
-                };
-                dataGridViewTable.DataSource = highPriorityView;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Ошибка: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        private void toolTaskIncomplete_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                DataView incompleteTasksView = new DataView(localizationDataSet.Задачи)
-                {
-                    RowFilter = "Статус_задачи <> 3"
-                };
-                dataGridViewTable.DataSource = incompleteTasksView;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Ошибка: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        private void toolTaskNoFiles_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                DataView noFilesView = new DataView(localizationDataSet.Задачи)
-                {
-                    RowFilter = "ISNULL(Файлы_задачи, '') = ''"
-                };
-                dataGridViewTable.DataSource = noFilesView;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Ошибка: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        private void toolTaskByProject_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                string input = ShowInputDialog("Фильтр по проекту", "Введите код проекта: ");
-
-                if (int.TryParse(input, out int taskId))
-                {
-                    DataView view = new DataView(localizationDataSet.Задачи)
-                    {
-                        RowFilter = $"Код_проекта = {taskId}"
-                    };
-                    dataGridViewTable.DataSource = view;
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Ошибка: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        private void toolTaskByEmployee_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                string input = ShowInputDialog("Фильтр по сотруднику", "Введите код сотрудника: ");
-
-                if (int.TryParse(input, out int taskId))
-                {
-                    DataView view = new DataView(localizationDataSet.Задачи)
-                    {
-                        RowFilter = $"Исполнитель = {taskId}"
-                    };
-                    dataGridViewTable.DataSource = view;
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Ошибка: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        private void toolEmployeeJob_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                string input = ShowInputDialog("Фильтр по должности", "Введите код должности: ");
-
-                if (int.TryParse(input, out int employeeId))
-                {
-                    DataView view = new DataView(localizationDataSet.Сотрудники)
-                    {
-                        RowFilter = $"Должность = {employeeId}"
-                    };
-                    dataGridViewTable.DataSource = view;
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Ошибка: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        private void toolEmployeeLastName_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                string lastName = ShowInputDialog("Фильтр по фамилии", "Введите фамилию: ");
-
-                if (!string.IsNullOrWhiteSpace(lastName))
-                {
-                    DataView view = new DataView(localizationDataSet.Сотрудники)
-                    {
-                        RowFilter = $"Фамилия LIKE '%{lastName}%'"
-                    };
-                    dataGridViewTable.DataSource = view;
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Ошибка: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        private void toolEmployeeBonus_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                DataView view = new DataView(localizationDataSet.Сотрудники)
-                {
-                    RowFilter = "Надбавка > 5000"
-                };
-                dataGridViewTable.DataSource = view;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Ошибка: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        private void toolEmployeeNoEmail_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                DataView view = new DataView(localizationDataSet.Сотрудники)
-                {
-                    RowFilter = "ISNULL(Email, '') = ''"
-                };
-                dataGridViewTable.DataSource = view;
             }
             catch (Exception ex)
             {
@@ -486,6 +484,7 @@ namespace localization_studio_db
                     }
                 }
 
+                dataGridViewTable.AutoGenerateColumns = true;
                 dataGridViewTable.DataSource = result;
             }
             catch (Exception ex)
@@ -494,171 +493,7 @@ namespace localization_studio_db
             }
         }
 
-        private void toolOLanguages_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                var result = new DataTable();
-                result.Columns.Add("ФИО");
-                result.Columns.Add("Язык");
-                result.Columns.Add("Уровень");
 
-                foreach (var владение in localizationDataSet.Владение_языками)
-                {
-                    var сотрудник = localizationDataSet.Сотрудники.FindByКод_сотрудника(владение.Код_сотрудника);
-                    var язык = localizationDataSet.Языки.FindByКод_языка(владение.Код_языка);
-
-                    if (сотрудник != null && язык != null)
-                    {
-                        result.Rows.Add(
-                            $"{сотрудник.Фамилия} {сотрудник.Имя} {сотрудник.Отчество}",
-                            язык.Язык,
-                            владение.Код_уровня
-                        );
-                    }
-                }
-
-                dataGridViewTable.DataSource = result;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        private void toolOProjectEmployee_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                string input = ShowInputDialog("Фильтр по сотруднику", "Введите код сотрудника: ");
-                if (!int.TryParse(input, out int empId)) return;
-
-                var query = from team in localizationDataSet.Проектные_роли
-                            where team.Код_сотрудника == empId
-                            join project in localizationDataSet.Проекты
-                            on team.Код_проекта equals project.Код_проекта
-                            select project;
-
-                var result = localizationDataSet.Проекты.Clone();
-                foreach (var row in query)
-                    result.ImportRow(row);
-
-                dataGridViewTable.DataSource = result;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        private void toolOMediaLanguage_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                string input = ShowInputDialog("Фильтр по языку", "Введите код языка: ");
-                if (!int.TryParse(input, out int langId)) return;
-
-                var query = localizationDataSet.Медиа.AsEnumerable()
-                    .Where(row => row.Field<byte>("Язык") == langId);
-
-                var result = localizationDataSet.Медиа.Clone();
-                foreach (var row in query)
-                    result.ImportRow(row);
-
-                dataGridViewTable.DataSource = result;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        private void toolOPairs_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                var result = new DataTable();
-                result.Columns.Add("Язык 1");
-                result.Columns.Add("Язык 2");
-                result.Columns.Add("Ссылка на словарь");
-
-                foreach (var row in localizationDataSet.Словари)
-                {
-                    var lang1 = localizationDataSet.Языки.FindByКод_языка(row.Язык_оригинала);
-                    var lang2 = localizationDataSet.Языки.FindByКод_языка(row.Язык_перевода);
-
-                    if (lang1 != null && lang2 != null)
-                    {
-                        result.Rows.Add(lang1.Язык, lang2.Язык, row.Ссылка_на_словарь);
-                    }
-                }
-
-                dataGridViewTable.DataSource = result;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        private void toolProjectStatus_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                var query = localizationDataSet.Проекты.AsEnumerable()
-                    .GroupBy(p => p.Field<byte>("Статус_проекта"))
-                    .Select(g => new { Статус = g.Key, Количество = g.Count() });
-
-                var result = new DataTable();
-                result.Columns.Add("Статус");
-                result.Columns.Add("Количество");
-
-                foreach (var row in query)
-                    result.Rows.Add(row.Статус, row.Количество);
-
-                dataGridViewTable.DataSource = result;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        private void toolSOPayout_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                var result = new DataTable();
-                result.Columns.Add("ФИО");
-                result.Columns.Add("Должность");
-                result.Columns.Add("Оклад", typeof(decimal));
-                result.Columns.Add("Надбавка", typeof(decimal));
-                result.Columns.Add("Сумма", typeof(decimal));
-
-                foreach (var сотрудник in localizationDataSet.Сотрудники)
-                {
-                    var должность = localizationDataSet.Должность.FindByКод_должности(сотрудник.Должность);
-                    if (должность != null)
-                    {
-                        decimal оклад = должность.Стандартный_оклад;
-                        decimal надбавка = сотрудник.Надбавка;
-                        result.Rows.Add(
-                            $"{сотрудник.Фамилия} {сотрудник.Имя} {сотрудник.Отчество}",
-                            должность.Название_должности,
-                            оклад,
-                            надбавка,
-                            оклад + надбавка
-                        );
-                    }
-                }
-
-                dataGridViewTable.DataSource = result;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
 
         private void toolOTasks_Click(object sender, EventArgs e)
         {
@@ -678,7 +513,7 @@ namespace localization_studio_db
                         project != null ? project.Код_проекта.ToString() : "—",
                         emp != null ? $"{emp.Фамилия} {emp.Имя}" : "—");
                 }
-
+                dataGridViewTable.AutoGenerateColumns = true;
                 dataGridViewTable.DataSource = result;
             }
             catch (Exception ex)
@@ -703,39 +538,13 @@ namespace localization_studio_db
                     if (!engagedIds.Contains(сотрудник.Код_сотрудника))
                         result.ImportRow(сотрудник);
                 }
-
+                dataGridViewTable.AutoGenerateColumns = true;
                 dataGridViewTable.DataSource = result;
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-        }
-
-
-        private string ShowInputDialog(string title, string prompt)
-        {
-            Form promptForm = new Form()
-            {
-                Width = 400,
-                Height = 150,
-                FormBorderStyle = FormBorderStyle.FixedDialog,
-                Text = title,
-                StartPosition = FormStartPosition.CenterScreen
-            };
-
-            Label textLabel = new Label() { Left = 20, Top = 20, Text = prompt, AutoSize = true };
-            TextBox inputBox = new TextBox() { Left = 20, Top = 50, Width = 340 };
-            Button confirmation = new Button() { Text = "OK", Left = 270, Width = 90, Top = 80, DialogResult = DialogResult.OK };
-
-            confirmation.Click += (sender, e) => { promptForm.Close(); };
-
-            promptForm.Controls.Add(textLabel);
-            promptForm.Controls.Add(inputBox);
-            promptForm.Controls.Add(confirmation);
-            promptForm.AcceptButton = confirmation;
-
-            return promptForm.ShowDialog() == DialogResult.OK ? inputBox.Text : null;
         }
 
         private void buttonSave_Click(object sender, EventArgs e)
@@ -764,6 +573,106 @@ namespace localization_studio_db
             catch (Exception ex)
             {
                 MessageBox.Show($"Ошибка при сбросе: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void ReplaceForeignKeysWithComboBoxes(DataTable table, string tableName)
+        {
+            var grid = dataGridViewTable;
+
+            // Map of foreign key columns: [TableName, ColumnName] => (LookupTable, ValueMember, DisplayMember)
+            var fkMappings = new Dictionary<(string Table, string Column), (DataTable Lookup, string ValueMember, string DisplayMember)>
+            {
+                // Задачи
+                { ("Задачи", "Исполнитель"), (localizationDataSet.Сотрудники, "Код_сотрудника", "Фамилия") },
+                { ("Задачи", "Приоритет"), (localizationDataSet.Приоритет, "Код_приоритета", "Приоритет") },
+                { ("Задачи", "Статус_задачи"), (localizationDataSet.Статус_выполнения, "Код", "Статус_выполнения") },
+                { ("Задачи", "Код_проекта"), (localizationDataSet.Проекты, "Код_проекта", "Код_проекта") },
+
+                // Владение_языками
+                { ("Владение_языками", "Код_сотрудника"), (localizationDataSet.Сотрудники, "Код_сотрудника", "Фамилия") },
+                { ("Владение_языками", "Код_языка"), (localizationDataSet.Языки, "Код_языка", "Язык") },
+                { ("Владение_языками", "Код_уровня"), (localizationDataSet.Уровень_языка, "Код_уровня", "Название_уровня") },
+
+                // Проекты
+                { ("Проекты", "Код_контракта"), (localizationDataSet.Контракты, "Код_контракта", "Код_контракта") },
+                { ("Проекты", "Код_медиа"), (localizationDataSet.Медиа, "Код_медиа", "Название") },
+                { ("Проекты", "Статус_проекта"), (localizationDataSet.Статус_выполнения, "Код", "Статус_выполнения") },
+                { ("Проекты", "Приоритет"), (localizationDataSet.Приоритет, "Код_приоритета", "Приоритет") },
+
+                // Сотрудники
+                { ("Сотрудники", "Должность"), (localizationDataSet.Должность, "Код_должности", "Название_должности") },
+
+                // Контракты
+                { ("Контракты", "Код_клиента"), (localizationDataSet.Клиенты, "Код_клиента", "Фамилия") },
+                { ("Контракты", "Статус_выполнения"), (localizationDataSet.Статус_выполнения, "Код", "Статус_выполнения") },
+
+                // Медиа
+                { ("Медиа", "Язык"), (localizationDataSet.Языки, "Код_языка", "Язык") },
+
+                // Проектные роли
+                { ("Проектные_роли", "Код_сотрудника"), (localizationDataSet.Сотрудники, "Код_сотрудника", "Фамилия")},
+
+                // Словари
+                { ("Словари", "Язык_оригинала"), (localizationDataSet.Языки, "Код_языка", "Язык") },
+                { ("Словари", "Язык_перевода"), (localizationDataSet.Языки, "Код_языка", "Язык") }
+            };
+
+            foreach (DataColumn column in table.Columns)
+            {
+                var key = (tableName, column.ColumnName);
+                if (fkMappings.TryGetValue(key, out var lookup))
+                {
+                    grid.Columns.Add(new DataGridViewComboBoxColumn
+                    {
+                        DataPropertyName = column.ColumnName,
+                        HeaderText = column.Caption ?? column.ColumnName,
+                        DataSource = lookup.Lookup,
+                        ValueMember = lookup.ValueMember,
+                        DisplayMember = lookup.DisplayMember,
+                        DisplayStyle = DataGridViewComboBoxDisplayStyle.DropDownButton
+                    });
+                }
+                else
+                {
+                    grid.Columns.Add(new DataGridViewTextBoxColumn
+                    {
+                        DataPropertyName = column.ColumnName,
+                        HeaderText = column.Caption ?? column.ColumnName
+                    });
+                }
+            }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                dataGridViewTable.EndEdit();
+                this.Validate();
+
+                string selectedTable = toolStripTableBox.SelectedItem?.ToString();
+                if (string.IsNullOrEmpty(selectedTable))
+                {
+                    MessageBox.Show("Выберите таблицу для сохранения.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                bool success = TableAdapterHelper.UpdateSingleTable(selectedTable, localizationDataSet);
+
+                if (success)
+                {
+                    MessageBox.Show("Изменения сохранены успешно!", "Сохранение", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                else
+                {
+                    MessageBox.Show("Не удалось сохранить изменения. Таблица не поддерживается или произошла ошибка.", 
+                        "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при сохранении: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 

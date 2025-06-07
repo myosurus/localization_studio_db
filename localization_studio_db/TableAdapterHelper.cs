@@ -11,9 +11,6 @@ namespace localization_studio_db
         {
             if (dataSet == null) throw new ArgumentNullException(nameof(dataSet));
 
-            try { new LocalizationDataSetTableAdapters.Вид_медиаTableAdapter().Fill(dataSet.Вид_медиа); }
-            catch (Exception ex) { Debug.WriteLine($"[Fill] Вид_медиа failed: {ex.Message}"); }
-
             try { new LocalizationDataSetTableAdapters.ДолжностьTableAdapter().Fill(dataSet.Должность); }
             catch (Exception ex) { Debug.WriteLine($"[Fill] Должность failed: {ex.Message}"); }
 
@@ -22,12 +19,6 @@ namespace localization_studio_db
 
             try { new LocalizationDataSetTableAdapters.Статус_выполненияTableAdapter().Fill(dataSet.Статус_выполнения); }
             catch (Exception ex) { Debug.WriteLine($"[Fill] Статус_выполнения failed: {ex.Message}"); }
-
-            try { new LocalizationDataSetTableAdapters.Статус_документацииTableAdapter().Fill(dataSet.Статус_документации); }
-            catch (Exception ex) { Debug.WriteLine($"[Fill] Статус_документации failed: {ex.Message}"); }
-
-            try { new LocalizationDataSetTableAdapters.Статус_оплатыTableAdapter().Fill(dataSet.Статус_оплаты); }
-            catch (Exception ex) { Debug.WriteLine($"[Fill] Статус_оплаты failed: {ex.Message}"); }
 
             try { new LocalizationDataSetTableAdapters.Уровень_языкаTableAdapter().Fill(dataSet.Уровень_языка); }
             catch (Exception ex) { Debug.WriteLine($"[Fill] Уровень_языка failed: {ex.Message}"); }
@@ -71,9 +62,6 @@ namespace localization_studio_db
         {
             if (dataSet == null) throw new ArgumentNullException(nameof(dataSet));
 
-            try { new LocalizationDataSetTableAdapters.Вид_медиаTableAdapter().Update(dataSet.Вид_медиа); }
-            catch (Exception ex) { Debug.WriteLine($"[Update] Вид_медиа failed: {ex.Message}"); }
-
             try { new LocalizationDataSetTableAdapters.Владение_языкамиTableAdapter().Update(dataSet.Владение_языками); }
             catch (Exception ex) { Debug.WriteLine($"[Update] Владение_языками failed: {ex.Message}"); }
 
@@ -113,12 +101,6 @@ namespace localization_studio_db
             try { new LocalizationDataSetTableAdapters.Статус_выполненияTableAdapter().Update(dataSet.Статус_выполнения); }
             catch (Exception ex) { Debug.WriteLine($"[Update] Статус_выполнения failed: {ex.Message}"); }
 
-            try { new LocalizationDataSetTableAdapters.Статус_документацииTableAdapter().Update(dataSet.Статус_документации); }
-            catch (Exception ex) { Debug.WriteLine($"[Update] Статус_документации failed: {ex.Message}"); }
-
-            try { new LocalizationDataSetTableAdapters.Статус_оплатыTableAdapter().Update(dataSet.Статус_оплаты); }
-            catch (Exception ex) { Debug.WriteLine($"[Update] Статус_оплаты failed: {ex.Message}"); }
-
             try { new LocalizationDataSetTableAdapters.Уровень_языкаTableAdapter().Update(dataSet.Уровень_языка); }
             catch (Exception ex) { Debug.WriteLine($"[Update] Уровень_языка failed: {ex.Message}"); }
 
@@ -126,11 +108,77 @@ namespace localization_studio_db
             catch (Exception ex) { Debug.WriteLine($"[Update] Языки failed: {ex.Message}"); }
         }
 
+        public static bool UpdateSingleTable(string tableName, LocalizationDataSet dataSet)
+        {
+            if (string.IsNullOrWhiteSpace(tableName) || dataSet == null)
+                return false;
+
+            try
+            {
+                switch (tableName)
+                {
+                    case "Владение_языками":
+                        new LocalizationDataSetTableAdapters.Владение_языкамиTableAdapter().Update(dataSet.Владение_языками);
+                        break;
+                    case "Должность":
+                        new LocalizationDataSetTableAdapters.ДолжностьTableAdapter().Update(dataSet.Должность);
+                        break;
+                    case "Задачи":
+                        new LocalizationDataSetTableAdapters.ЗадачиTableAdapter().Update(dataSet.Задачи);
+                        break;
+                    case "Клиенты":
+                        new LocalizationDataSetTableAdapters.КлиентыTableAdapter().Update(dataSet.Клиенты);
+                        break;
+                    case "Контракты":
+                        new LocalizationDataSetTableAdapters.КонтрактыTableAdapter().Update(dataSet.Контракты);
+                        break;
+                    case "Медиа":
+                        new LocalizationDataSetTableAdapters.МедиаTableAdapter().Update(dataSet.Медиа);
+                        break;
+                    case "Приоритет":
+                        new LocalizationDataSetTableAdapters.ПриоритетTableAdapter().Update(dataSet.Приоритет);
+                        break;
+                    case "Проектные_команды":
+                        new LocalizationDataSetTableAdapters.Проектные_командыTableAdapter().Update(dataSet.Проектные_команды);
+                        break;
+                    case "Проектные_роли":
+                        new LocalizationDataSetTableAdapters.Проектные_ролиTableAdapter().Update(dataSet.Проектные_роли);
+                        break;
+                    case "Проекты":
+                        new LocalizationDataSetTableAdapters.ПроектыTableAdapter().Update(dataSet.Проекты);
+                        break;
+                    case "Словари":
+                        new LocalizationDataSetTableAdapters.СловариTableAdapter().Update(dataSet.Словари);
+                        break;
+                    case "Сотрудники":
+                        new LocalizationDataSetTableAdapters.СотрудникиTableAdapter().Update(dataSet.Сотрудники);
+                        break;
+                    case "Статус_выполнения":
+                        new LocalizationDataSetTableAdapters.Статус_выполненияTableAdapter().Update(dataSet.Статус_выполнения);
+                        break;
+                    case "Уровень_языка":
+                        new LocalizationDataSetTableAdapters.Уровень_языкаTableAdapter().Update(dataSet.Уровень_языка);
+                        break;
+                    case "Языки":
+                        new LocalizationDataSetTableAdapters.ЯзыкиTableAdapter().Update(dataSet.Языки);
+                        break;
+                    default:
+                        return false;
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[UpdateSingle] {tableName} failed: {ex.Message}");
+                return false;
+            }
+        }
+
         public static void ClearAllTables(LocalizationDataSet dataSet)
         {
             if (dataSet == null) throw new ArgumentNullException(nameof(dataSet));
 
-            dataSet.Вид_медиа.Clear();
             dataSet.Владение_языками.Clear();
             dataSet.Должность.Clear();
             dataSet.Задачи.Clear();
@@ -144,11 +192,10 @@ namespace localization_studio_db
             dataSet.Словари.Clear();
             dataSet.Сотрудники.Clear();
             dataSet.Статус_выполнения.Clear();
-            dataSet.Статус_документации.Clear();
-            dataSet.Статус_оплаты.Clear();
             dataSet.Уровень_языка.Clear();
             dataSet.Языки.Clear();
         }
+
 
     }
 }

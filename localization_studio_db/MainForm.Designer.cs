@@ -31,8 +31,8 @@ namespace localization_studio_db
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle17 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle18 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             this.mainMenuStrip = new System.Windows.Forms.MenuStrip();
             this.toolStripTableBox = new System.Windows.Forms.ToolStripComboBox();
             this.toolStripQueries = new System.Windows.Forms.ToolStripMenuItem();
@@ -47,7 +47,6 @@ namespace localization_studio_db
             this.toolProjectOpen = new System.Windows.Forms.ToolStripMenuItem();
             this.toolProjectNoFiles = new System.Windows.Forms.ToolStripMenuItem();
             this.toolProjectByContract = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolProjectAudio = new System.Windows.Forms.ToolStripMenuItem();
             this.задачиToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolTaskPriority = new System.Windows.Forms.ToolStripMenuItem();
             this.toolTaskIncomplete = new System.Windows.Forms.ToolStripMenuItem();
@@ -62,7 +61,6 @@ namespace localization_studio_db
             this.toolEmployeeC2 = new System.Windows.Forms.ToolStripMenuItem();
             this.другоеToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolOLanguages = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolOProjectEmployee = new System.Windows.Forms.ToolStripMenuItem();
             this.toolOMediaLanguage = new System.Windows.Forms.ToolStripMenuItem();
             this.toolOPairs = new System.Windows.Forms.ToolStripMenuItem();
             this.toolProjectStatus = new System.Windows.Forms.ToolStripMenuItem();
@@ -76,6 +74,7 @@ namespace localization_studio_db
             this.buttonSave = new System.Windows.Forms.Button();
             this.buttonReset = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.button1 = new System.Windows.Forms.Button();
             this.panel2 = new System.Windows.Forms.Panel();
             this.localizationDataSetBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.localizationDataSet = new localization_studio_db.LocalizationDataSet();
@@ -180,8 +179,7 @@ namespace localization_studio_db
             this.toolProjectPriority,
             this.toolProjectOpen,
             this.toolProjectNoFiles,
-            this.toolProjectByContract,
-            this.toolProjectAudio});
+            this.toolProjectByContract});
             this.проектыToolStripMenuItem.Name = "проектыToolStripMenuItem";
             this.проектыToolStripMenuItem.Size = new System.Drawing.Size(224, 28);
             this.проектыToolStripMenuItem.Text = "Проекты";
@@ -213,13 +211,6 @@ namespace localization_studio_db
             this.toolProjectByContract.Size = new System.Drawing.Size(266, 28);
             this.toolProjectByContract.Text = "По контракту";
             this.toolProjectByContract.Click += new System.EventHandler(this.toolProjectByContract_Click);
-            // 
-            // toolProjectAudio
-            // 
-            this.toolProjectAudio.Name = "toolProjectAudio";
-            this.toolProjectAudio.Size = new System.Drawing.Size(266, 28);
-            this.toolProjectAudio.Text = "Требуется озвучка";
-            this.toolProjectAudio.Click += new System.EventHandler(this.toolProjectAudio_Click);
             // 
             // задачиToolStripMenuItem
             // 
@@ -319,7 +310,6 @@ namespace localization_studio_db
             // 
             this.другоеToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolOLanguages,
-            this.toolOProjectEmployee,
             this.toolOMediaLanguage,
             this.toolOPairs,
             this.toolProjectStatus,
@@ -336,13 +326,6 @@ namespace localization_studio_db
             this.toolOLanguages.Size = new System.Drawing.Size(393, 28);
             this.toolOLanguages.Text = "Владение языками";
             this.toolOLanguages.Click += new System.EventHandler(this.toolOLanguages_Click);
-            // 
-            // toolOProjectEmployee
-            // 
-            this.toolOProjectEmployee.Name = "toolOProjectEmployee";
-            this.toolOProjectEmployee.Size = new System.Drawing.Size(393, 28);
-            this.toolOProjectEmployee.Text = "Проекты сотрудника";
-            this.toolOProjectEmployee.Click += new System.EventHandler(this.toolOProjectEmployee_Click);
             // 
             // toolOMediaLanguage
             // 
@@ -417,23 +400,23 @@ namespace localization_studio_db
             this.dataGridViewTable.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dataGridViewTable.BackgroundColor = System.Drawing.Color.GhostWhite;
             this.dataGridViewTable.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            dataGridViewCellStyle17.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle17.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle17.Font = new System.Drawing.Font("Comfortaa", 8.999999F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            dataGridViewCellStyle17.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(50)))), ((int)(((byte)(50)))));
-            dataGridViewCellStyle17.SelectionBackColor = System.Drawing.Color.MidnightBlue;
-            dataGridViewCellStyle17.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle17.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridViewTable.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle17;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Comfortaa", 8.999999F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            dataGridViewCellStyle3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(50)))), ((int)(((byte)(50)))));
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.Color.MidnightBlue;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridViewTable.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle3;
             this.dataGridViewTable.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle18.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle18.BackColor = System.Drawing.Color.Honeydew;
-            dataGridViewCellStyle18.Font = new System.Drawing.Font("Comfortaa", 8.999999F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            dataGridViewCellStyle18.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(50)))), ((int)(((byte)(50)))));
-            dataGridViewCellStyle18.SelectionBackColor = System.Drawing.Color.LavenderBlush;
-            dataGridViewCellStyle18.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(50)))), ((int)(((byte)(50)))));
-            dataGridViewCellStyle18.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataGridViewTable.DefaultCellStyle = dataGridViewCellStyle18;
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = System.Drawing.Color.Honeydew;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Comfortaa", 8.999999F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            dataGridViewCellStyle4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(50)))), ((int)(((byte)(50)))));
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.Color.LavenderBlush;
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(50)))), ((int)(((byte)(50)))));
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridViewTable.DefaultCellStyle = dataGridViewCellStyle4;
             this.dataGridViewTable.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridViewTable.Location = new System.Drawing.Point(10, 10);
             this.dataGridViewTable.Margin = new System.Windows.Forms.Padding(10);
@@ -446,11 +429,11 @@ namespace localization_studio_db
             // buttonSave
             // 
             this.buttonSave.Dock = System.Windows.Forms.DockStyle.Right;
-            this.buttonSave.Location = new System.Drawing.Point(775, 10);
+            this.buttonSave.Location = new System.Drawing.Point(844, 10);
             this.buttonSave.Name = "buttonSave";
-            this.buttonSave.Size = new System.Drawing.Size(265, 41);
+            this.buttonSave.Size = new System.Drawing.Size(196, 41);
             this.buttonSave.TabIndex = 2;
-            this.buttonSave.Text = "Сохранить изменения";
+            this.buttonSave.Text = "Сохранить все";
             this.buttonSave.UseVisualStyleBackColor = true;
             this.buttonSave.Click += new System.EventHandler(this.buttonSave_Click);
             // 
@@ -459,7 +442,7 @@ namespace localization_studio_db
             this.buttonReset.Dock = System.Windows.Forms.DockStyle.Left;
             this.buttonReset.Location = new System.Drawing.Point(10, 10);
             this.buttonReset.Name = "buttonReset";
-            this.buttonReset.Size = new System.Drawing.Size(234, 41);
+            this.buttonReset.Size = new System.Drawing.Size(211, 41);
             this.buttonReset.TabIndex = 3;
             this.buttonReset.Text = "Сбросить изменения";
             this.buttonReset.UseVisualStyleBackColor = true;
@@ -467,6 +450,7 @@ namespace localization_studio_db
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.button1);
             this.panel1.Controls.Add(this.buttonReset);
             this.panel1.Controls.Add(this.buttonSave);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
@@ -475,6 +459,16 @@ namespace localization_studio_db
             this.panel1.Padding = new System.Windows.Forms.Padding(10);
             this.panel1.Size = new System.Drawing.Size(1050, 61);
             this.panel1.TabIndex = 5;
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(636, 10);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(202, 41);
+            this.button1.TabIndex = 4;
+            this.button1.Text = "Сохранить текущую";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // panel2
             // 
@@ -551,7 +545,6 @@ namespace localization_studio_db
         private System.Windows.Forms.ToolStripMenuItem toolProjectOpen;
         private System.Windows.Forms.ToolStripMenuItem toolProjectNoFiles;
         private System.Windows.Forms.ToolStripMenuItem toolProjectByContract;
-        private System.Windows.Forms.ToolStripMenuItem toolProjectAudio;
         private System.Windows.Forms.ToolStripMenuItem toolTaskPriority;
         private System.Windows.Forms.ToolStripMenuItem toolTaskIncomplete;
         private System.Windows.Forms.ToolStripMenuItem toolTaskNoFiles;
@@ -563,7 +556,6 @@ namespace localization_studio_db
         private System.Windows.Forms.ToolStripMenuItem toolEmployeeNoEmail;
         private System.Windows.Forms.ToolStripMenuItem toolEmployeeC2;
         private System.Windows.Forms.ToolStripMenuItem toolOLanguages;
-        private System.Windows.Forms.ToolStripMenuItem toolOProjectEmployee;
         private System.Windows.Forms.ToolStripMenuItem toolOMediaLanguage;
         private System.Windows.Forms.ToolStripMenuItem toolOPairs;
         private System.Windows.Forms.ToolStripMenuItem toolProjectStatus;
@@ -574,6 +566,7 @@ namespace localization_studio_db
         private System.Windows.Forms.Button buttonReset;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.Button button1;
     }
 }
 
